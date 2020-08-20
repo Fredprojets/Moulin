@@ -2,7 +2,7 @@ package leJeu
 
 import kotlin.random.Random.Default.nextInt
 
-fun main(args:Array<String>) {
+fun main() {
 
     val joueur1 = Joueur("X", AI = false)
     val joueur2 = Joueur("AI", AI = true)
@@ -21,7 +21,7 @@ fun main(args:Array<String>) {
     }
 }
 
-data class Jeton(val proprietaire:String, var proteger:Boolean = false){
+class Jeton(var proprietaire:String = "o", var proteger:Boolean = false){
     override fun toString(): String {
         return proprietaire.first().toString()
     }
@@ -29,16 +29,15 @@ data class Jeton(val proprietaire:String, var proteger:Boolean = false){
 
 class Joueur(val nom:String, val AI:Boolean){
     var nbJetons = 9
-    private val jeton = Jeton(nom)
 
     fun jouer():Boolean{
         return if (AI){
             val anneau = listOf("b","m","c")
-            val choix = anneau[nextInt(3)] + nextInt(8).toString()
+            val choix = anneau[nextInt(3)] + (nextInt(8)+1).toString()
             nbJetons--
-            Plateau.placerJeton(jeton,choix)
+            Plateau.placerJeton(nom,choix)
         } else{
-            val valide = Plateau.placerJeton(jeton,readLine()!!)
+            val valide = Plateau.placerJeton(nom,readLine()!!)
             nbJetons--
             if (!valide){
                 println("choix non-valide")
@@ -50,16 +49,16 @@ class Joueur(val nom:String, val AI:Boolean){
 }
 
 object Plateau {
-    var b: MutableList<String> = mutableListOf("o", "o", "o", "o", "o", "o", "o", "o")
-    var m: MutableList<String> = mutableListOf("o", "o", "o", "o", "o", "o", "o", "o")
-    var c: MutableList<String> = mutableListOf("o", "o", "o", "o", "o", "o", "o", "o")
+    var b: MutableList<Jeton> = mutableListOf(Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton())
+    var m: MutableList<Jeton> = mutableListOf(Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton())
+    var c: MutableList<Jeton> = mutableListOf(Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton(), Jeton())
 
-    fun placerJeton(jeton: Jeton,endroit:String):Boolean{
+    fun placerJeton(nom: String,endroit:String):Boolean{
         val position = endroit.last().toInt() - 49
         when (endroit) {
-            in "b1".."b8"-> if(b[position] == "o") b[position] = jeton.toString() else return false
-            in "m1".."m8" -> if(m[position] == "o") m[position] = jeton.toString() else return false
-            in "c1".."c8" -> if(c[position] == "o") c[position] = jeton.toString() else return false
+            in "b1".."b8"-> if(b[position].toString() == "o") b[position].proprietaire = nom else return false
+            in "m1".."m8" -> if(m[position].toString() == "o") m[position].proprietaire = nom else return false
+            in "c1".."c8" -> if(c[position].toString() == "o") c[position].proprietaire = nom else return false
             else -> return false
         }
 
