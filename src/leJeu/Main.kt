@@ -28,7 +28,7 @@ fun main() {
 }
 
 class Joueur(val nom:String,val adversaire:String, val AI:Boolean){
-    var nbJetons = 9
+    var nbJetons = 0
 
     fun placer():Boolean{
         return if (AI){
@@ -38,7 +38,7 @@ class Joueur(val nom:String,val adversaire:String, val AI:Boolean){
                 val choix = anneau[nextInt(3)] + (nextInt(8) + 1).toString()
 
                 valide =Plateau.placerJeton(this, choix)
-                if (valide) nbJetons--
+                if (valide) nbJetons++
             }
             valide
 
@@ -48,7 +48,7 @@ class Joueur(val nom:String,val adversaire:String, val AI:Boolean){
                 valide =Plateau.placerJeton(this,readLine()!!)
                 if (!valide){
                     println("Coup non valide, entrez un coup valide")
-                } else nbJetons--
+                } else nbJetons++
             }
             valide
         }
@@ -73,11 +73,13 @@ class Case(val case:String, var jeton:Char = 'o'){
 }
 object Plateau {
 
+    // les cases extérieur vers intérieur (b,m,c) et
+    // position hautGauche,hMilieu,hdroite,milieuGauche,mmilieu,mDroite,basGauche,bmilieu,bDroite(0..7)
     var b = listOf(Case("b0"), Case("b1"), Case("b2"), Case("b3"), Case("b4"), Case("b5"), Case("b6"), Case("b7"))
     var m = listOf(Case("m0"), Case("m1"), Case("m2"), Case("m3"), Case("m4"), Case("m5"), Case("m6"), Case("m7"))
     var c = listOf(Case("c0"), Case("c1"), Case("c2"), Case("c3"), Case("c4"), Case("c5"), Case("c6"), Case("c7"))
 
-    init {
+    init {// pour chaque case défini les cases adjacente et les cases qui peuvent faire un moulin
         b[0].adj = arrayOf(b[1],b[3],m[0]) ; b[0].moulinable = arrayOf(arrayOf(b[1],b[2]), arrayOf(b[3],b[5]), arrayOf(m[0],c[0]))
         b[1].adj = arrayOf(b[0],b[2],m[1]) ; b[1].moulinable = arrayOf(arrayOf(b[0],b[2]), arrayOf(m[1],c[1]))
         b[2].adj = arrayOf(b[1],b[4],m[2]) ; b[2].moulinable = arrayOf(arrayOf(b[0],b[1]), arrayOf(b[4],b[7]), arrayOf(m[2],c[2]))
@@ -105,8 +107,6 @@ object Plateau {
         c[6].adj = arrayOf(c[5],c[7],m[6]) ; c[6].moulinable = arrayOf(arrayOf(c[5],c[7]), arrayOf(b[6],m[6]))
         c[7].adj = arrayOf(c[4],c[6],m[7]) ; c[7].moulinable = arrayOf(arrayOf(c[5],c[6]), arrayOf(c[2],c[4]), arrayOf(b[7],m[7]))
     }
-
-
 
     fun victoire():Boolean{
         return false
