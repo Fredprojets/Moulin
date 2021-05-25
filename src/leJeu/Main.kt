@@ -27,50 +27,6 @@ fun main() {
 
 }
 
-class Joueur(val nom:String,val adversaire:String, val AI:Boolean){
-    var nbJetons = 0
-
-    fun placer():Boolean{
-        return if (AI){
-            var valide = false
-            while (!valide) {
-                val anneau = listOf("b", "m", "c")
-                val choix = anneau[nextInt(3)] + (nextInt(8) + 1).toString()
-
-                valide =Plateau.placerJeton(this, choix)
-                if (valide) nbJetons++
-            }
-            valide
-
-        } else{ //coups du joeur humain
-            var valide = false
-            while (!valide) {
-                valide =Plateau.placerJeton(this,readLine()!!)
-                if (!valide){
-                    println("Coup non valide, entrez un coup valide")
-                } else nbJetons++
-            }
-            valide
-        }
-    }
-
-    fun bouger() {
-        do {
-            var choix = readLine()!!
-            var jeton = choix
-        } while (!Plateau.choixJeton(choix,this))
-    }
-
-}
-class Case(val case:String, var jeton:Char = 'o'){
-    var protect:Boolean = false
-    var adj:Array<Case> = arrayOf()
-    var moulinable:Array<Array<Case>> = arrayOf()
-
-    override fun toString():String {
-        return jeton.toString()
-    }
-}
 object Plateau {
 
     // les cases extérieur vers intérieur (b,m,c) et
@@ -140,7 +96,7 @@ object Plateau {
     }
 
     fun choixJeton(position: String, joueur: Joueur):Boolean{
-        val pos = position.last().toInt() - 49
+        val pos = position.last().code - 49
         return when (position) {
             in "b1".."b8"-> b[pos].jeton == joueur.nom.first()
             in "m1".."m8" -> m[pos].jeton == joueur.nom.first()
@@ -151,7 +107,7 @@ object Plateau {
 
     private fun checkMoulin(position:String, joueur: Joueur){
         val j = joueur.nom.first()
-        val p = position.last().toInt()-49
+        val p = position.last().code -49
         when(position.first()){
             'b' -> b[p].moulinable.forEach { if ( it[0].jeton == j && it[1].jeton == j) {moulin(b[p],it[0],it[1], joueur.adversaire)} }
 
@@ -172,7 +128,7 @@ object Plateau {
     }
 
     private fun enleverJeton(endroit: String, ennemi: String):Boolean {
-        val p = endroit.last().toInt() - 49
+        val p = endroit.last().code - 49
         when (endroit) {
             in "b1".."b8"-> if(b[p].jeton == ennemi.first() && !b[p].protect) {
                 b[p].jeton = 'o'
